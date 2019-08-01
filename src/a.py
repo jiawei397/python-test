@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-import func
-from func import test
+from src import func
+from src.func import test
 
 # 第一个注释
 print("Hello, Python!")  # 第二个注释
