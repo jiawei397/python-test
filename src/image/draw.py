@@ -20,8 +20,9 @@ def rndColor2():
 width = 60 * 4
 height = 60
 image = Image.new('RGB', (width, height), (255, 255, 255))
-# 创建Font对象:
-font = ImageFont.truetype('Arial.ttf', 36)
+# 创建Font对象: 如果有错，则是未找到字体文件
+font = ImageFont.truetype('../resources/arial.ttf', 36)
+
 # 创建Draw对象:
 draw = ImageDraw.Draw(image)
 # 填充每个像素:
