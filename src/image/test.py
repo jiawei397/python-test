@@ -1,5 +1,6 @@
 from PIL import Image
 
+# 这个包是pillow
 # 打开一个jpg图像文件，注意是当前路径:
 im = Image.open('../resources/test.png')
 # 获得图像尺寸:
