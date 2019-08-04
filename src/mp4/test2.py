@@ -22,16 +22,17 @@ def get_detail(urls):
       if mp4_url_list:
         mp4_url = mp4_url_list[0]
         print(mp4_url)
+        save(mp4_url)
 
 
 def save(url):
   video = requests.get(url)
   if video.status_code== 200:
     m = hashlib.md5()
-    m.updata(url.encode('utf-8'))
-    m.updata(str(time.time()).encode('utf-8'))
+    m.update(url.encode('utf-8'))
+    m.update(str(time.time()).encode('utf-8'))
     filename = r'%s.mp4'% m.hexdigest()
-    filepath = r'd:\\java\mp4\%'%filename
+    filepath = r'd:\\java\mp4\%s'%filename
     with open(filepath, 'wb') as f:
       f.write(video.content)
 
