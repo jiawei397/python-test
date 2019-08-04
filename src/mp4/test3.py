@@ -4,8 +4,7 @@ import hashlib
 import time
 from concurrent.futures import ThreadPoolExecutor,as_completed
 
-p = ThreadPoolExecutor(3)  # 创建一个进程池中，容纳线程个数30个
-future_tasks = []
+p = ThreadPoolExecutor(30)  # 创建一个进程池中，容纳线程个数30个
 
 def get_index(url):
   respose = requests.get(url)
@@ -14,25 +13,13 @@ def get_index(url):
 
 
 def parse_index(res):
-  res = res.result()  # 进程执行完毕后，得到1个对象
+  # res = res.result()  # 进程执行完毕后，得到1个对象
   urls = re.findall(r'class="items".*?href="(.*?)"', res, re.S)  # re.S 把文本信息转换成一行匹配
-  # print(urls)
 
-  # future_tasks = [p.submit(get_detail, url) for url in urls]  # 创建3个future对象
   for url in urls:
   #   # print(url)
     m_url = get_detail(url)
     p.submit(save, m_url)
-  #   future_tasks.append(p.submit(get_detail,url))
-  #   # p.submit(get_detail(url))
-  # for future in as_completed(future_tasks):  # 迭代生成器
-  #   try:
-  #     resp = future.result()
-  #   except Exception as e:
-  #     print('%s' % e)
-  #   else:
-  #     print('%s has %d bytes!' % (resp.url, len(resp.text)))
-
 
 
 def get_detail(url):
@@ -62,7 +49,8 @@ def save(url):
 
 def main():
   for i in range(1):
-    p.submit(get_index, 'http://www.xiaohuar.com/list-3-%s.html' % i).add_done_callback(parse_index)
+    index = get_index('http://www.xiaohuar.com/list-3-%s.html' % 1)
+    parse_index(index)
 
 
 if __name__ == '__main__':
