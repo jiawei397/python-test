@@ -42,13 +42,13 @@ def save(url):
     m.update(url.encode('utf-8'))
     m.update(str(time.time()).encode('utf-8'))
     filename = r'%s.mp4' % m.hexdigest()
-    filepath = r'd:\\java\mp4\%s' % filename
+    filepath = r'c:\\java\mp4\%s' % filename
     with open(filepath, 'wb') as f:
       f.write(video.content)
 
 
 def main():
-  for i in range(1):
+  for i in range(5):
     index = get_index('http://www.xiaohuar.com/list-3-%s.html' % 1)
     parse_index(index)
 
