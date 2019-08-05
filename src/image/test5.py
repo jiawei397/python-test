@@ -9,9 +9,16 @@ import os
 dir = '../../tmp/image'
 os.makedirs(dir, exist_ok=True)
 
-headers = {
-    'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:53.0) Gecko/20100101 Firefox/53.0'
-}
+root = 'http://mzitu.92game.net'
+
+# headers = {
+#     # 'Upgrade-Insecure-Requests': 1,
+#     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36'
+# }
+headers = {'If-None-Match': 'W/"5cc2cd8f-2c58"',
+          "Referer": "http://www.mzitu.com/all/",
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 UBrowser/6.1.2107.204 SafarMozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'}
+
 
 class GetSexGirl(object):
 
@@ -19,7 +26,10 @@ class GetSexGirl(object):
     def get_all_urls(self):
         urls_list = []
         for i in range(1,82):
-            url = "http://www.mzitu.com/xinggan/page/{0}".format(i)
+            html = "index_%s" % i
+            if(i==1):
+              html = "index"
+            url = root + "/xinggan/%s.html" % html
             # print(url)
             urls_list.append(url)
         return urls_list
@@ -29,11 +39,12 @@ class GetSexGirl(object):
         map_title_url = {}
         selector = self.get_selector(url)
         url = selector.css("#pins span a::attr(href)").extract()
-        title = selector.css("#pins span a::text").extract()
+        # text = selector.css("#pins span a::text")
+        # title = selector.css("#pins span a::text").extract()
 
         size = len(url)
         for i in range(size):
-            map_title_url[url[i]] = title[i]
+            map_title_url[url[i]] = str(i) #title[i]
         return map_title_url
 
     # 获取当前主题下的所有图片url
@@ -81,9 +92,10 @@ class GetSexGirl(object):
             img_response = requests.get(image_url, headers=headers)
         except:
             return
-        f = open(file_name, 'ab')
-        f.write(img_response.content)  # 多媒体文件要是用conctent
-        f.close()
+        if img_response.status_code == 200:
+          f = open(file_name, 'ab')
+          f.write(img_response.content)  # 多媒体文件要是用conctent
+          f.close()
 
     def get_selector(self,url):
         response = requests.get(url, headers=headers)
@@ -94,9 +106,13 @@ if __name__ == '__main__':
     get_sex_girl = GetSexGirl() #获取当前sex模块的所有页面url
     total_url_list = get_sex_girl.get_all_urls()
 
-    for i in range(len(total_url_list)):
+
+    # get_sex_girl.download_image(dir, 'http://file.92game.net/mzitu/d/file/bigpic/2016/05/18/23/201605182332150.jpg')
+
+
+    for html in total_url_list:
         # 获取单个页面的url和title,title用来创建文件夹，map_title_url是一个字典
-        map_title_url = get_sex_girl.get_title_urls('http://www.mzitu.com/xinggan/page/2')
+        map_title_url = get_sex_girl.get_title_urls(html)
         urls = map_title_url.keys()
         for url in urls:
             #对每一个主题创建一个文件夹,文件夹名称就是title
@@ -107,7 +123,7 @@ if __name__ == '__main__':
                 os.makedirs(base_dir)
 
             #获取当前页的所有图片url地址
-            image_url_list = get_sex_girl.get_image_urls(url)
+            image_url_list = get_sex_girl.get_image_urls(root + url)
             for i in range(len(image_url_list)):
                 # 保存当前页的所有图片到该主题的目录下
                 get_sex_girl.download_image(base_dir, image_url_list[i])
