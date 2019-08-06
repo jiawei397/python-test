@@ -1,6 +1,7 @@
 import os
 
-dir_path = 'C:\Documents\图片\Camera Roll\image'
+# dir_path = 'C:\Documents\图片\Camera Roll\image'
+dir_path = '../../tmp/image'
 # print(os.listdir(dir_path))
 
 # del_arr = []
@@ -8,7 +9,9 @@ dir_path = 'C:\Documents\图片\Camera Roll\image'
 for child_dir in os.listdir(dir_path):
   child_list = os.listdir(dir_path + '/' + child_dir)
   # print(child_list)
-  if(len(child_list) == 1):
+  if len(child_list) == 0:
+    os.removedirs(dir_path + '/' + child_dir)
+  elif len(child_list) == 1:
     # print(child_list)
     # print(child_dir)
     if(child_dir.endswith(')')):
