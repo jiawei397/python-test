@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from src.modules import *
 
 def print_func(par):
   print("Hello : ", par)
@@ -14,3 +15,7 @@ def test(par):
   return
 
 # test('haha')
+
+# test1.runnoob1()
+# test1.runnoob1()
+test2.runnoob2()
