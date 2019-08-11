@@ -15,3 +15,4 @@ frame/source/
 /test/e2e/images/
 /build/Debug/
 /dist/
+*.pyc
