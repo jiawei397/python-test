@@ -1,14 +1,30 @@
+# -*- encoding: utf-8 -*-
 import os
+# rootdir = os.getcwd()               #获取当前路径
+rootdir = '../'
 
-# dir_path = 'C:\Documents\图片\Camera Roll\image'
-dir_path = '../'
-# print(os.listdir(dir_path))
-
-# del_arr = []
-
-for child_dir in os.listdir(dir_path):
-  child_dir_path = os.path.join(dir_path, child_dir)
-  if os.path.isdir(child_dir_path):
-      size = os.path.getsize(child_dir_path)
-      if size > 0:
-        print(child_dir_path + ': ' + str(size))
+# rootdir = rootdir.decode('gbk')
+x  = u'统计文件大小.csv'
+f = open(os.path.join(rootdir,x), "w+")
+for dirname in  os.listdir(rootdir):  #获取二级目录所有文件夹与文件
+    Dir = os.path.join(rootdir, dirname)    #路径补齐
+    count = 0
+    if (os.path.isdir(Dir)):           #判断是否为目录
+        for r, ds, files in os.walk(Dir): #遍历目录下所有文件根，目录下的每一个文件夹(包含它自己), 产生3-元组 (dirpath, dirnames, filenames)【文件夹路径, 文件夹名字, 文件名称】
+            for file in files:      #遍历所有文件
+                size = os.path.getsize(os.path.join(r, file)) #获取文件大小
+                count += size
+        if count == 0:
+            continue
+        if ((count/1024.0) < 1024):
+            print(Dir +'\t' + '%.2f'% (count/1024.0)+'KB')
+            f.write(Dir +','+  '%.2f'% (count/1024.0)+'KB' + '\n')
+        elif ((count/1024.0/1024.0) < 1024):
+            print(Dir +'\t' + '%.2f'% (count/1024.0/1024.0)+'MB')
+            f.write(Dir +','+  '%.2f'% (count/1024.0/1024.0)+'MB' + '\n')
+        else:
+            print(Dir + '\t' + '%.2f' % (count / 1024.0 / 1024.0/1024.0) + 'GB')
+            f.write(Dir + ',' + '%.2f' % (count / 1024.0 / 1024.0/1024.0) + 'GB' + '\n')
+    else:
+        continue
+f.close()
