@@ -1,6 +1,9 @@
 # -*- coding:utf-8 -*-
 import urllib.request
 from lxml import etree
+import os
+
+kw = '韩国车模'
 
 
 def loadPage(url):
@@ -59,7 +62,10 @@ def writeImage(link):
     # 取出连接后10位做为文件名
     filename = link[-10:]
     # 写入到本地磁盘文件内
-    with open("../../tmp/" + filename, "wb") as f:
+    filepath = os.path.join("C:\\Documents\\图片\\Camera Roll", kw)
+    if os.path.exists(filepath) == False:
+        os.makedirs(filepath)
+    with open(os.path.join(filepath, filename), "wb") as f:
         f.write(image)
         # print("已经成功下载 " + filename)
 
@@ -85,7 +91,6 @@ def tiebaSpider(url, beginPage, endPage):
 
 if __name__ == "__main__":
     # kw = input("请输入需要爬取的贴吧名:")
-    kw = '韩国车模'
     # beginPage = int(input("请输入起始页："))
     beginPage = 1
     # endPage = int(input("请输入结束页："))
