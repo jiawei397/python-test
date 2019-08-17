@@ -1,14 +1,13 @@
-import re
-import requests
 import urllib.request
 from lxml import etree
+from src.spider.proxyCaches import getRandomIp
 
 url = 'https://www.qidian.com/rank/hotsales'
 # 浏览器伪装
 # opener=urllib.request.build_opener()
 
 # 设置代理
-proxy = {'http': '120.83.110.50:9999'}
+proxy = {'http': getRandomIp()}
 proxy_support = urllib.request.ProxyHandler(proxy)
 opener = urllib.request.build_opener(proxy_support)
 opener.addheaders = [('User-Agent',
