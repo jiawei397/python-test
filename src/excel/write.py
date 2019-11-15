@@ -56,7 +56,7 @@ def read_excel(file, num):
     # print(data.worksheets)
 
     for table in data.worksheets:
-        if table.title.find('清单') == -1 and table.title.find('填写须知') == -1:
+        if table.title.find('清单') == -1 and table.title.find('填写须知') == -1 and table.title.find('长期股权投资') == -1:
             read_table(table)
         # elif table.title.find('清单') != -1:
         #     read_qingdan_table(table, num)
@@ -92,7 +92,7 @@ def read_table(table):
 def write_excel(file):
     data = openpyxl.load_workbook(file)
     for table in data.worksheets:
-        if table.title.find('清单') == -1 and table.title.find('填写须知') == -1:
+        if table.title.find('清单') == -1 and table.title.find('填写须知') == -1 and table.title.find('长期股权投资') == -1:
             nrows = table.max_row  # 获得行数
             ncolumns = table.max_column  # 获得行数
 
