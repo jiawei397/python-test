@@ -21,3 +21,6 @@ linux下: 修改 ~/.pip/pip.conf （如果没有自己创建一个）， 内容�
   index-url = https://pypi.tuna.tsinghua.edu.cn/simple
 
 参考：https://blog.csdn.net/yamadeee/article/details/80178996
+
+打包命令：
+pyinstaller -F app.py
