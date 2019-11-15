@@ -1,12 +1,22 @@
 import openpyxl
 import os
 import re
+import logging
+
+FORMAT_DATA = format = "%(asctime)s - %(name)s -[%(lineno)d] - %(message)s"
+DEFINE_TIME = "%Y/%m/%d %H:%M:%S"  # 自定义时间格式
+logging.basicConfig(level=logging.ERROR,
+                    datefmt=DEFINE_TIME,
+                    format=FORMAT_DATA,
+                    filename="write.log",
+                    filemode="a+")
 
 file = 'demo.xlsx'
 qingdan_dict = {}
 end_row_map = {}
 pattern = re.compile(r'^[-+]?[-0-9]\d*\.\d*|[-+]?\.?[0-9]\d*$')
 map = {}
+
 
 # 遍历指定目录，显示目录下的所有文件名
 def eachFile(filepath):
@@ -18,18 +28,21 @@ def eachFile(filepath):
         read_excel(child, num)
         num += 1
 
+
 def is_number(num):
-  result = pattern.match(str(num))
-  if result:
-    return True
-  else:
-    return False
+    result = pattern.match(str(num))
+    if result:
+        return True
+    else:
+        return False
+
 
 def get_key(table, row, num):
     return table + '-' + str(row) + '-' + str(num)
 
+
 def is_key(table, row, num):
-    return get_key(table,row, num) in map
+    return get_key(table, row, num) in map
 
 
 def read_excel(file, num):
@@ -45,21 +58,22 @@ def read_excel(file, num):
     for table in data.worksheets:
         if table.title.find('清单') == -1 and table.title.find('填写须知') == -1:
             read_table(table)
-        elif table.title.find('清单') != -1:
-            read_qingdan_table(table, num)
+        # elif table.title.find('清单') != -1:
+        #     read_qingdan_table(table, num)
 
-    # table = data.worksheets[2]
+            # table = data.worksheets[2]
 
-    # read_table(table)
-    # values = ['E', 'X', 'C', 'E', 'L']
-    # for value in value:
-    #     table.cell(nrows + 1, 1).value = value
-    #     nrows = nrows + 1
-    # print(table.cell(4, 4).value)
-    # table.cell(4, 4).value = 33
-    # data.save('excel_test.xlsx')
+            # read_table(table)
+            # values = ['E', 'X', 'C', 'E', 'L']
+            # for value in value:
+            #     table.cell(nrows + 1, 1).value = value
+            #     nrows = nrows + 1
+            # print(table.cell(4, 4).value)
+            # table.cell(4, 4).value = 33
+            # data.save('excel_test.xlsx')
 
-    # list.append(table.cell(4, 4).value)
+            # list.append(table.cell(4, 4).value)
+
 
 def read_table(table):
     # print(table.title)  # 输出表名
@@ -85,18 +99,24 @@ def write_excel(file):
             for row in range(1, nrows):
                 for col in range(1, ncolumns):
                     if is_key(table.title, row, col):
-                        table.cell(row, col).value = sum(map[get_key(table.title, row, col)])
+                        try:
+                            table.cell(row, col).value = sum(map[get_key(table.title, row, col)])
+                        except AttributeError as e:
+                            print(e, table.title, row, col)
+                            logging.error(e)
+                            logging.error('table=' + table.title + ' row=' + str(row) + ' col=' + str(col))
 
-        #TODO elif table.title.find('清单') != -1:
-        elif table.title == '4.应收清单20190930':
-        #     print(table.title)
-            for key in qingdan_dict:
-                arr = key.split('-')
-                if arr[0] == table.title:
-                    print(key, qingdan_dict[key])
-                    table.cell(int(arr[1]), int(arr[2])).value = qingdan_dict[key]
+                            # TODO elif table.title.find('清单') != -1:
+        # elif table.title == '4.应收清单20190930':
+        #     #     print(table.title)
+        #     for key in qingdan_dict:
+        #         arr = key.split('-')
+        #         if arr[0] == table.title:
+        #             # print(key, qingdan_dict[key])
+        #             table.cell(int(arr[1]), int(arr[2])).value = qingdan_dict[key]
 
     data.save('汇总表.xlsx')
+
 
 # 读取清单
 def read_qingdan_table(table, num):
@@ -123,7 +143,7 @@ def read_qingdan_table(table, num):
             val = table.cell(row, col).value
             if val != None:
                 # print(row, col, val)
-                key = get_key(table.title, row - 2 + (num-1)* end_row, col)
+                key = get_key(table.title, row - 2 + (num - 1) * end_row, col)
                 qingdan_dict[key] = val
 
 
