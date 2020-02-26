@@ -24,3 +24,12 @@ linux下: 修改 ~/.pip/pip.conf （如果没有自己创建一个）， 内容�
 
 打包命令：
 pyinstaller -F app.py
+
+### window安装包失败
+
+到这个网站下载失败的包：https://www.lfd.uci.edu/~gohlke/pythonlibs/
+
+再这样安装：pip install pycryptosat‑0.2.0‑cp36‑cp36m‑win_amd64.whl
+
+
+
