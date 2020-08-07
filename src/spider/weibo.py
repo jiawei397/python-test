@@ -4,13 +4,13 @@ import json
 import requests
 import os
 
-path = 'D:\\weibo\\'
+path = 'D:\\图片\\images'
 
 # id = '5829543885'
 id = '6048132583'
 proxy_addr = "113.195.17.123:9999"
 pic_num = 0
-weibo_name = "images"
+weibo_name = "" #微博昵称
 
 
 def use_proxy(url, proxy_addr):
@@ -44,16 +44,17 @@ def get_userInfo(id):
     profile_url = content.get('userInfo').get('profile_url')
     verified = content.get('userInfo').get('verified')
     guanzhu = content.get('userInfo').get('follow_count')
-    name = content.get('userInfo').get('screen_name')
+    global weibo_name
+    weibo_name = content.get('userInfo').get('screen_name')
     fensi = content.get('userInfo').get('followers_count')
     gender = content.get('userInfo').get('gender')
     urank = content.get('userInfo').get('urank')
-    print("微博昵称：" + name + "\n" + "微博主页地址：" + profile_url + "\n" + "微博头像地址：" + profile_image_url + "\n" + "是否认证：" + str(
+    print("微博昵称：" + weibo_name + "\n" + "微博主页地址：" + profile_url + "\n" + "微博头像地址：" + profile_image_url + "\n" + "是否认证：" + str(
         verified) + "\n" + "微博说明：" + description + "\n" + "关注人数：" + str(guanzhu) + "\n" + "粉丝数：" + str(
         fensi) + "\n" + "性别：" + gender + "\n" + "微博等级：" + str(urank) + "\n")
 
 
-def get_weibo(id, file):
+def get_weibo(id):
     global pic_num
     i = 200
     while True:
@@ -66,16 +67,10 @@ def get_weibo(id, file):
             cards = content.get('cards')
             if (len(cards) > 0):
                 for j in range(len(cards)):
-                    print("-----正在爬取第" + str(i) + "页，第" + str(j) + "条微博------")
+                    print(weibo_name + "-----正在爬取第" + str(i) + "页，第" + str(j) + "条微博------")
                     card_type = cards[j].get('card_type')
                     if (card_type == 9):
                         mblog = cards[j].get('mblog')
-                        attitudes_count = mblog.get('attitudes_count')
-                        comments_count = mblog.get('comments_count')
-                        created_at = mblog.get('created_at')
-                        reposts_count = mblog.get('reposts_count')
-                        scheme = cards[j].get('scheme')
-                        text = mblog.get('text')
                         if mblog.get('pics') != None:
                             pic_archive = mblog.get('pics')
                             for _ in range(len(pic_archive)):
@@ -83,17 +78,12 @@ def get_weibo(id, file):
                                 print(pic_archive[_]['large']['url'])
                                 imgurl = pic_archive[_]['large']['url']
                                 img = requests.get(imgurl)
-                                f = open(path + weibo_name + '\\' + '精品街拍' + str(pic_num) + str(imgurl[-4:]),
+                                imgName = imgurl.split("/")[-1:][0]
+                                f = open(path + '\\' + weibo_name + '\\' + weibo_name + '_' + imgName,
                                          'ab')  # 存储图片，多媒体文件需要参数b（二进制文件）
                                 f.write(img.content)  # 多媒体存储content
                                 f.close()
 
-                        # with open(file, 'a', encoding='utf-8') as fh:
-                        #     fh.write("----第" + str(i) + "页，第" + str(j) + "条微博----" + "\n")
-                        #     fh.write("微博地址：" + str(scheme) + "\n" + "发布时间：" + str(
-                        #         created_at) + "\n" + "微博内容：" + text + "\n" + "点赞数：" + str(
-                        #         attitudes_count) + "\n" + "评论数：" + str(comments_count) + "\n" + "转发数：" + str(
-                        #         reposts_count) + "\n")
                 i += 1
             else:
                 break
@@ -103,10 +93,9 @@ def get_weibo(id, file):
 
 
 if __name__ == "__main__":
-    if os.path.isdir(path + weibo_name):
+    get_userInfo(id)
+    if os.path.isdir(path + "\\" + weibo_name):
         pass
     else:
-        os.mkdir(path + weibo_name)
-    file = path + weibo_name + '\\' + weibo_name + ".txt"
-    get_userInfo(id)
-    get_weibo(id, file)
+        os.makedirs(path + "\\" + weibo_name) #循环创建
+    get_weibo(id)
