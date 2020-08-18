@@ -16,3 +16,5 @@ frame/source/
 /build/Debug/
 /dist/
 *.pyc
+__**__
+/build/
